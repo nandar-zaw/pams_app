@@ -1,7 +1,10 @@
 from datetime import date
+from typing import Optional
 
 class Patient:
-    def __init__(self, patient_id: int, first_name: str, last_name: str, phone_number: str | None, email: str | None, mailing_address: str | None, date_of_birth: date):
+    def __init__(self, patient_id: int, first_name: str, last_name: str,
+                 phone_number: Optional[str], email: Optional[str],
+                 mailing_address: Optional[str], date_of_birth: date):
         self.patient_id = patient_id
         self.first_name = first_name
         self.last_name = last_name

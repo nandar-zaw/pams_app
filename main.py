@@ -4,7 +4,7 @@ from services.patient_service import PatientService
 
 # Preloaded patient data
 patients = [
-    Patient(1, "Daniel", "Agar", "(641) 123-0009", "dagar@m.as", "1 N Street", date(1987, 1, 19)),
+    Patient(1, "Daniel", "Zaw", "(641) 123-0009", "dagar@m.as", "1 N Street", date(1987, 1, 19)),
     Patient(2, "Ana", "Smith", None, "amsith@te.edu", None, date(1948, 12, 5)),
     Patient(3, "Marcus", "Garvey", "(123) 292-0018", None, "4 East Ave", date(2001, 9, 18)),
     Patient(4, "Jeff", "Goldbloom", "(999) 165-1192", "jgold@es.co.za", None, date(1995, 2, 28)),

@@ -5,39 +5,50 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run tests
-      run: pytest tests/
-    - name: Create zip artifact
-      run: zip -r pams_app_release.zip . -x "*.git*" "*__pycache__*"
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./pams_app_release.zip
-        asset_name: pams_app_release.zip
-        asset_content_type: application/zip
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5.4.0
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short
+
+      - name: Create release artifact
+        run: |
+          zip -r pams_app_release.zip . \
+            --exclude "*.git*" \
+            --exclude "*__pycache__*" \
+            --exclude "*.pytest_cache*" \
+            --exclude "*.zip"
+
+      - name: Create GitHub Release and Upload Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pams_app_release.zip
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## PAMS App Release ${{ github.ref_name }}
+            ### Installation
+            1. Download pams_app_release.zip
+            2. Unzip the file
+            3. Run: pip install -r requirements.txt
+            4. Run: python main.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
